@@ -23,7 +23,8 @@ router.get('/', async (req, res) => {
     const { search, id_jabfung, id_instansi, status_verifikasi, status_ujian, page = 1, limit = 10 } = req.query;
     
     let query = `
-      SELECT p.*, j.nama_jabfung, i.nama_instansi
+      SELECT p.*, j.nama_jabfung, i.nama_instansi,
+      (SELECT path_file FROM dokumen_peserta dp WHERE dp.id_peserta = p.id AND dp.jenis_dokumen = 'Foto' LIMIT 1) as foto
       FROM peserta_ukom p
       LEFT JOIN jabfung j ON p.id_jabfung = j.id
       LEFT JOIN instansi i ON p.id_instansi = i.id
@@ -112,7 +113,8 @@ router.get('/check-nik/:nik', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const [data] = await db.execute(`
-      SELECT p.*, j.nama_jabfung, i.nama_instansi
+      SELECT p.*, j.nama_jabfung, i.nama_instansi,
+      (SELECT path_file FROM dokumen_peserta dp WHERE dp.id_peserta = p.id AND dp.jenis_dokumen = 'Foto' LIMIT 1) as foto
       FROM peserta_ukom p
       LEFT JOIN jabfung j ON p.id_jabfung = j.id
       LEFT JOIN instansi i ON p.id_instansi = i.id

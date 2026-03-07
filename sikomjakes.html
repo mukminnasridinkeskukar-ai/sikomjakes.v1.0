@@ -68,6 +68,30 @@
     </div>
   </div>
 
+  <!-- Detail Peserta Modal -->
+  <div id="detailModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="glass rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Detail Peserta UKOM</h2>
+        <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div id="detailModalContent" class="text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Photo Fullscreen Modal -->
+  <div id="photoModal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full">
+      <button onclick="closePhotoModal()" class="absolute -top-12 right-0 text-white hover:text-gray-300">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h3 id="photoModalTitle" class="text-white text-center text-xl font-bold mb-4"></h3>
+      <img id="photoModalImg" src="" alt="Foto Peserta" class="max-h-[80vh] mx-auto rounded-lg shadow-2xl">
+    </div>
+  </div>
+
   <!-- Main Layout -->
   <div class="flex min-h-screen">
     <!-- Sidebar -->
@@ -251,8 +275,7 @@
                     <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">No</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama Jabatan</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenjang Jabatan</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Persetujuan</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Kebutuhan JF</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Persetujuan Kebutuhan JF</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100" id="formasiTable">
@@ -517,30 +540,56 @@
 
         <!-- PESERTA PAGE -->
         <div id="page-peserta" class="page">
-          <div class="glass rounded-xl overflow-hidden">
-            <div class="p-4 border-b border-gray-200 flex flex-col md:flex-row md:items-center gap-4">
-              <div class="relative flex-1 max-w-md">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <input type="text" placeholder="Cari NIK, nama, email..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+          <!-- Filter & Search Bar -->
+          <div class="glass rounded-xl p-4 mb-4">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div class="flex flex-col md:flex-row gap-3 flex-1 w-full md:w-auto">
+                <!-- Search -->
+                <div class="relative flex-1 max-w-md">
+                  <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                  <input type="text" id="searchPeserta" placeholder="Cari nama, NIK..." class="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <!-- Filter Jabatan Fungsional -->
+                <select id="filterJabfung" class="px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white min-w-[180px]">
+                  <option value="">Semua Jabfung</option>
+                  <option value="Perawat">Perawat</option>
+                  <option value="Bidan">Bidan</option>
+                  <option value="Dokter Gigi">Dokter Gigi</option>
+                  <option value="Apoteker">Apoteker</option>
+                  <option value="Nutrisionis">Nutrisionis</option>
+                  <option value="Radiografer">Radiografer</option>
+                </select>
+                <!-- Filter Status -->
+                <select id="filterStatus" class="px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white min-w-[180px]">
+                  <option value="">Semua Status</option>
+                  <option value="Terdaftar">Terdaftar</option>
+                  <option value="Lolos Administrasi">Lolos Administrasi</option>
+                  <option value="Tidak Lolos">Tidak Lolos</option>
+                  <option value="Lulus">Lulus UKOM</option>
+                  <option value="Tidak Lulus">Tidak Lulus</option>
+                </select>
               </div>
-              <select class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                <option value="">Semua Jabfung</option>
-                <option value="1">Dokter Gigi</option>
-                <option value="2">Perawat</option>
-                <option value="3">Bidan</option>
-              </select>
+              <!-- Export Button -->
+              <button onclick="exportPesertaExcel()" class="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Export Excel
+              </button>
             </div>
+          </div>
+
+          <!-- Table -->
+          <div class="glass rounded-xl overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead class="bg-blue-50">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">No</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Unit Kerja</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama Jabatan Fungsional</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenjang Jabatan</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Foto</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Status</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 w-14">No</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 w-20">Foto</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 min-w-[160px]">Nama</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 min-w-[180px]">Unit Kerja</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 min-w-[140px]">Jabatan Fungsional</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 w-28">Jenjang</th>
+                    <th class="px-3 py-3 text-left text-xs font-bold text-blue-800 w-32">Status</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100" id="pesertaTable">
@@ -548,54 +597,43 @@
                 </tbody>
               </table>
             </div>
+            <!-- Pagination -->
+            <div class="px-4 py-3 border-t border-gray-200 flex items-center justify-between" id="pesertaPagination"></div>
           </div>
         </div>
 
         <!-- ADMIN PAGE (Only visible after login) -->
         <div id="page-admin" class="page">
           <div class="glass rounded-xl p-6 mb-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Panel Admin - Verifikasi Peserta</h3>
-            <p class="text-gray-500">Kelola dan verifikasi peserta UKOM</p>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Panel Admin - Kelola Peserta UKOM</h3>
+            <p class="text-gray-500">Kelola data peserta dari formulir dan tentukan rekomendasi</p>
           </div>
           <div class="glass rounded-xl overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead class="bg-blue-50">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">NIK</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Verifikasi</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Aksi</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">No</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Nama Lengkap</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">NIK</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">NIP</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">No. HP</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Unit Kerja</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Jenis Jabatan</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Jenjang</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Pangkat/Gol</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Nilai PAK</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">No. STR</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Kategori</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Jabfung Tujuan</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Jenjang Tujuan</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Rekomendasi</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800">Aksi</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100" id="adminTable">
                   <tr>
-                    <td class="px-6 py-4 text-sm font-mono">1234567890123456</td>
-                    <td class="px-6 py-4 text-sm font-medium">Ahmad Fauzi</td>
-                    <td class="px-6 py-4">
-                      <select class="text-sm border rounded px-2 py-1">
-                        <option>Belum Diverifikasi</option>
-                        <option>Lolos Administrasi</option>
-                        <option>Tidak Lolos</option>
-                      </select>
-                    </td>
-                    <td class="px-6 py-4">
-                      <button class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">Simpan</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-6 py-4 text-sm font-mono">2345678901234567</td>
-                    <td class="px-6 py-4 text-sm font-medium">Siti Aminah</td>
-                    <td class="px-6 py-4">
-                      <select class="text-sm border rounded px-2 py-1">
-                        <option>Lolos Administrasi</option>
-                        <option>Belum Diverifikasi</option>
-                        <option>Tidak Lolos</option>
-                      </select>
-                    </td>
-                    <td class="px-6 py-4">
-                      <button class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">Simpan</button>
-                    </td>
+                    <td colspan="16" class="px-6 py-8 text-center text-gray-500">Memuat data...</td>
                   </tr>
                 </tbody>
               </table>
@@ -647,11 +685,11 @@
     };
 
     const demoFormasi = [
-      { no: 1, nama: 'Dokter Gigi', jenjang: 'Ahli Pertama', persetujuan: 25, kebutuhan: 25 },
-      { no: 2, nama: 'Perawat', jenjang: 'Terampil', persetujuan: 150, kebutuhan: 150 },
-      { no: 3, nama: 'Bidan', jenjang: 'Terampil', persetujuan: 30, kebutuhan: 28 },
-      { no: 4, nama: 'Apoteker', jenjang: 'Ahli Pertama', persetujuan: 20, kebutuhan: 18 },
-      { no: 5, nama: 'Analis Kesehatan', jenjang: 'Terampil', persetujuan: 15, kebutuhan: 12 },
+      { no: 1, nama: 'Dokter Gigi', jenjang: 'Ahli Pertama', persetujuan: 25 },
+      { no: 2, nama: 'Perawat', jenjang: 'Terampil', persetujuan: 150 },
+      { no: 3, nama: 'Bidan', jenjang: 'Terampil', persetujuan: 30 },
+      { no: 4, nama: 'Apoteker', jenjang: 'Ahli Pertama', persetujuan: 20 },
+      { no: 5, nama: 'Analis Kesehatan', jenjang: 'Terampil', persetujuan: 15 },
     ];
 
     const demoPeserta = [
@@ -666,6 +704,7 @@
     let useMockData = false; // Set ke false jika sudah konek ke Google Sheets
 
     // Fungsi Ambil Data dari Google Sheets (using POST)
+    let cachedHeaders = {};
     async function fetchFromSheet(sheetName) {
       try {
         const response = await fetch(SCRIPT_URL, {
@@ -676,15 +715,43 @@
         const result = await response.json();
         console.log('Fetch ' + sheetName + ' response:', result);
         if (result.success) {
-          return result.data;
+          // Cache headers for column mapping
+          if (result.headers) {
+            cachedHeaders[sheetName] = result.headers;
+            console.log(sheetName + ' headers:', cachedHeaders[sheetName]);
+          }
+          return { data: result.data, headers: result.headers };
         } else {
           console.error('Error fetching ' + sheetName + ':', result.message);
-          return null;
+          return { data: null, headers: [] };
         }
       } catch (error) {
         console.error('Error fetching from sheet:', error);
-        return null;
+        return { data: null, headers: [] };
       }
+    }
+    
+    // Get column index by header name (case insensitive, partial match)
+    function getColIndex(headers, colName) {
+      if (!headers) return -1;
+      const name = String(colName).toLowerCase().trim();
+      for (let i = 0; i < headers.length; i++) {
+        const header = String(headers[i]).toLowerCase().trim();
+        // Match if header contains the column name or vice versa
+        if (header.includes(name) || name.includes(header)) {
+          return i;
+        }
+      }
+      return -1;
+    }
+    
+    // Get cell value safely
+    function getCellValue(row, headers, colName, defaultValue = '') {
+      const idx = getColIndex(headers, colName);
+      if (idx >= 0 && idx < row.length) {
+        return row[idx] || defaultValue;
+      }
+      return defaultValue;
     }
 
     // Fungsi Load Data Dashboard
@@ -718,16 +785,21 @@
       }
     }
     
-    // Fallback: Load dashboard stats from Peserta sheet
+    // Fallback: Load dashboard stats from Formulir sheet
     async function loadDashboardFromPeserta() {
       try {
-        const data = await fetchFromSheet('Peserta');
-        const formasiData = await fetchFromSheet('Formasi');
+        const result = await fetchFromSheet('Formulir');
+        const data = result.data;
+        const formasiResult = await fetchFromSheet('Formasi');
+        const formasiData = formasiResult.data;
         
         let lulus = 0, tidakLulus = 0, belumUjian = 0;
         if (data) {
           for (let i = 0; i < data.length; i++) {
-            const status = data[i][19]; // Status Ujian
+            // Find status column dynamically
+            const headers = result.headers;
+            const statusIdx = getColIndex(headers, 'status ujian');
+            const status = statusIdx >= 0 ? data[i][statusIdx] : data[i][19];
             if (status === 'Lulus') lulus++;
             else if (status === 'Tidak Lulus') tidakLulus++;
             else belumUjian++;
@@ -929,7 +1001,125 @@
       if (page === 'formasi') loadFormasiTable();
       if (page === 'peserta') loadPesertaTable();
       if (page === 'bazzetting') loadBazzettingData();
+      if (page === 'admin') loadAdminTable();
       if (page === 'dashboard') loadDashboardData();
+    }
+    
+    // Load Admin Table Data from Google Sheets
+    async function loadAdminTable() {
+      const tbody = document.getElementById('adminTable');
+      
+      if (useMockData) {
+        // Demo data
+        tbody.innerHTML = demoPeserta.map((item, i) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm">${i+1}</td>
+            <td class="px-4 py-3 text-sm font-medium">${item.nama}</td>
+            <td class="px-4 py-3 text-sm font-mono">${item.nik || '-'}</td>
+            <td class="px-4 py-3 text-sm font-mono">${item.nip || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.no_hp || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.unit_kerja || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.jenis_jabatan || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.jenjang || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.pangkat || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.nilai_pak || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.no_str || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.kategori || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.jabfung || '-'}</td>
+            <td class="px-4 py-3 text-sm">${item.jenjang_tujuan || '-'}</td>
+            <td class="px-4 py-3">
+              <select class="text-sm border rounded px-2 py-1" id="rekomendasi_${i}">
+                <option value="">Pilih</option>
+                <option value="Direkomendasikan">Direkomendasikan</option>
+                <option value="Tidak Direkomendasikan">Tidak Direkomendasikan</option>
+                <option value="Perbaikan Data">Perbaikan Data</option>
+              </select>
+            </td>
+            <td class="px-4 py-3">
+              <button onclick="saveRekomendasi('${item.nik}', ${i})" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">Simpan</button>
+            </td>
+          </tr>
+        `).join('');
+        return;
+      }
+      
+      try {
+        tbody.innerHTML = '<tr><td colspan="16" class="px-6 py-8 text-center">Memuat data...</td></tr>';
+        const result = await fetchFromSheet('Formulir');
+        const data = result.data;
+        const headers = result.headers;
+        
+        if (data && data.length > 0) {
+          tbody.innerHTML = data.map((row, i) => {
+            const rekomendasi = getCellValue(row, headers, 'keputusan') || getCellValue(row, headers, 'rekomendasi') || '';
+            return `
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 text-sm">${i+1}</td>
+                <td class="px-4 py-3 text-sm font-medium">${getCellValue(row, headers, 'nama')}</td>
+                <td class="px-4 py-3 text-sm font-mono">${getCellValue(row, headers, 'nik')}</td>
+                <td class="px-4 py-3 text-sm font-mono">${getCellValue(row, headers, 'nip')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'no hp') || getCellValue(row, headers, 'hp')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'unit kerja')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'jenis jabatan')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'jenjang')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'pangkat') || getCellValue(row, headers, 'golongan')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'nilai pak') || getCellValue(row, headers, 'nilai pak')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'no str') || getCellValue(row, headers, 'str')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'kategori')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'jabfung tujuan') || getCellValue(row, headers, 'jabatan')}</td>
+                <td class="px-4 py-3 text-sm">${getCellValue(row, headers, 'jenjang tujuan')}</td>
+                <td class="px-4 py-3">
+                  <select class="text-sm border rounded px-2 py-1" id="rekomendasi_${i}" onchange="saveRekomendasi('${getCellValue(row, headers, 'nik')}', ${i})">
+                    <option value="" ${rekomendasi === '' ? 'selected' : ''}>Pilih</option>
+                    <option value="Direkomendasikan" ${rekomendasi === 'Direkomendasikan' ? 'selected' : ''}>Direkomendasikan</option>
+                    <option value="Tidak Direkomendasikan" ${rekomendasi === 'Tidak Direkomendasikan' ? 'selected' : ''}>Tidak Direkomendasikan</option>
+                    <option value="Perbaikan Data" ${rekomendasi === 'Perbaikan Data' ? 'selected' : ''}>Perbaikan Data</option>
+                  </select>
+                </td>
+                <td class="px-4 py-3">
+                  <button onclick="saveRekomendasi('${getCellValue(row, headers, 'nik')}', ${i})" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">Simpan</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="16" class="px-6 py-8 text-center text-gray-500">Belum ada data</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error loading admin data:', error);
+        tbody.innerHTML = '<tr><td colspan="16" class="px-6 py-8 text-center text-red-500">Error: ' + error.message + '</td></tr>';
+      }
+    }
+    
+    // Save Rekomendasi to Google Sheets
+    async function saveRekomendasi(nik, index) {
+      const select = document.getElementById('rekomendasi_' + index);
+      const rekomendasi = select.value;
+      
+      if (!rekomendasi) {
+        alert('Pilih rekomendasi terlebih dahulu');
+        return;
+      }
+      
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'action=updateStatus&data=' + encodeURIComponent(JSON.stringify({
+            nik: nik,
+            keputusan: rekomendasi
+          }))
+        });
+        const result = await response.json();
+        if (result.success) {
+          alert('Rekomendasi berhasil disimpan!');
+        } else {
+          alert('Gagal menyimpan: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Error saving:', error);
+        alert('Error: ' + error.message);
+      }
     }
 
     // Login Functions
@@ -969,8 +1159,7 @@
             <td class="px-6 py-4 text-sm">${i+1}</td>
             <td class="px-6 py-4 text-sm font-medium">${item.nama}</td>
             <td class="px-6 py-4 text-sm">${item.jenjang}</td>
-            <td class="px-6 py-4 text-sm">${item.persetujuan}</td>
-            <td class="px-6 py-4 text-sm font-semibold">${item.kebutuhan}</td>
+            <td class="px-6 py-4 text-sm font-semibold">${item.persetujuan}</td>
           </tr>
         `).join('');
       } else {
@@ -980,24 +1169,26 @@
     
     async function loadFormasiFromSheet(tbody) {
       try {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center">Memuat data...</td></tr>';
-        const data = await fetchFromSheet('Formasi');
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center">Memuat data...</td></tr>';
+        const result = await fetchFromSheet('Formasi');
+        const data = result.data;
+        const headers = result.headers;
+        
         if (data && data.length > 0) {
           tbody.innerHTML = data.map((row, i) => `
             <tr class="hover:bg-gray-50">
               <td class="px-6 py-4 text-sm">${i+1}</td>
-              <td class="px-6 py-4 text-sm font-medium">${row[1] || ''}</td>
-              <td class="px-6 py-4 text-sm">${row[2] || ''}</td>
-              <td class="px-6 py-4 text-sm">${row[3] || ''}</td>
-              <td class="px-6 py-4 text-sm font-semibold">${row[4] || ''}</td>
+              <td class="px-6 py-4 text-sm font-medium">${getCellValue(row, headers, 'nama jabatan') || getCellValue(row, headers, 'jabatan')}</td>
+              <td class="px-6 py-4 text-sm">${getCellValue(row, headers, 'jenjang')}</td>
+              <td class="px-6 py-4 text-sm font-semibold">${getCellValue(row, headers, 'persetujuan') || getCellValue(row, headers, 'kebutuhan')}</td>
             </tr>
           `).join('');
         } else {
-          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Belum ada data</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Belum ada data</td></tr>';
         }
       } catch (error) {
         console.error('Error loading formasi:', error);
-        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error: ' + error.message + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Error: ' + error.message + '</td></tr>';
       }
     }
 
@@ -1024,35 +1215,64 @@
     
     async function loadPesertaFromSheet(tbody) {
       try {
-        tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center">Memuat data...</td></tr>';
-        const data = await fetchFromSheet('Peserta');
+        tbody.innerHTML = '<tr><td colspan="11" class="px-6 py-4 text-center">Memuat data...</td></tr>';
+        const result = await fetchFromSheet('Formulir');
+        const data = result.data;
+        const headers = result.headers;
+        console.log('Formulir data:', data);
+        console.log('Formulir headers:', headers);
         const statusVerif = { 'Belum Diverifikasi': 'bg-yellow-100 text-yellow-800', 'Lolos Administrasi': 'bg-green-100 text-green-800', 'Tidak Lolos': 'bg-red-100 text-red-800' };
         const statusUjian = { 'Belum Ujian': 'bg-gray-100 text-gray-800', 'Sedang Ujian': 'bg-blue-100 text-blue-800', 'Lulus': 'bg-green-100 text-green-800', 'Tidak Lulus': 'bg-red-100 text-red-800' };
         
-        if (data && data.length > 0) {
-          tbody.innerHTML = data.map((row, i) => {
-            const verif = row[18] || 'Belum Diverifikasi';
-            const ujian = row[19] || 'Belum Ujian';
-            const fotoUrl = row[16] || '';
-            const fotoId = row[21] || '';
-            return `
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 text-sm">${i+1}</td>
-                <td class="px-6 py-4 text-sm font-medium">${row[2] || ''}</td>
-                <td class="px-6 py-4 text-sm">${row[7] || ''}</td>
-                <td class="px-6 py-4 text-sm">${row[14] || ''}</td>
-                <td class="px-6 py-4 text-sm">${row[15] || ''}</td>
-                <td class="px-6 py-4 text-sm">${fotoUrl ? '<a href="' + fotoUrl + '" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a>' : '-'}</td>
-                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${statusUjian[ujian] || 'bg-gray-100 text-gray-800'}">${ujian}</span></td>
-              </tr>
-            `;
-          }).join('');
-        } else {
-          tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Belum ada data</td></tr>';
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="11" class="px-6 py-4 text-center text-gray-500">Data kosong atau sheet tidak ditemukan</td></tr>';
+          return;
         }
+        
+        tbody.innerHTML = data.map((row, i) => {
+          const verif = getCellValue(row, headers, 'status verifikasi', 'Belum Diverifikasi');
+          const ujian = getCellValue(row, headers, 'status ujian', 'Belum Ujian');
+          const fotoUrl = getCellValue(row, headers, 'upload foto') || getCellValue(row, headers, 'foto') || getCellValue(row, headers, 'foto url');
+          const fotoId = getCellValue(row, headers, 'id foto drive') || getCellValue(row, headers, 'foto id');
+          
+          // Get thumbnail URL
+          let thumbUrl = '';
+          if (fotoUrl && fotoUrl.includes('drive.google.com')) {
+            const fileIdMatch = fotoUrl.match(/\/d\/([^\/]+)/);
+            if (fileIdMatch) {
+              thumbUrl = 'https://drive.google.com/thumbnail?sz=w100-h120&id=' + fileIdMatch[1];
+            }
+          } else if (fotoId) {
+            thumbUrl = 'https://drive.google.com/thumbnail?sz=w100-h120&id=' + fotoId;
+          }
+          
+          return `
+            <tr class="hover:bg-gray-50">
+              <td class="px-3 py-3 text-sm">${i+1}</td>
+              <td class="px-3 py-3">
+                ${thumbUrl ? 
+                  `<img src="${thumbUrl}" class="w-10 h-12 object-cover rounded border" alt="foto"
+                       onclick="viewDetailPeserta('${getCellValue(row, headers, 'nik')}')" style="cursor:pointer"
+                       onerror="this.style.display='none'">` :
+                  `<div class="w-10 h-12 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No Foto</div>`
+                }
+              </td>
+              <td class="px-3 py-3 text-sm font-medium">${getCellValue(row, headers, 'nama')}</td>
+              <td class="px-3 py-3 text-sm font-mono">${getCellValue(row, headers, 'nik')}</td>
+              <td class="px-3 py-3 text-sm">${getCellValue(row, headers, 'unit kerja')}</td>
+              <td class="px-3 py-3 text-sm">${getCellValue(row, headers, 'jabfung tujuan') || getCellValue(row, headers, 'jabatan')}</td>
+              <td class="px-3 py-3 text-sm">${getCellValue(row, headers, 'jenjang tujuan')}</td>
+              <td class="px-3 py-3 text-sm"><span class="px-2 py-1 rounded-full text-xs ${statusVerif[verif] || 'bg-gray-100 text-gray-800'}">${verif}</span></td>
+              <td class="px-3 py-3 text-sm"><span class="px-2 py-1 rounded-full text-xs ${statusUjian[ujian] || 'bg-gray-100 text-gray-800'}">${ujian}</span></td>
+              <td class="px-3 py-3">
+                <button onclick="viewDetailPeserta('${getCellValue(row, headers, 'nik')}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Detail</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
       } catch (error) {
         console.error('Error loading peserta:', error);
-        tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Error: ' + error.message + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" class="px-6 py-4 text-center text-red-500">Error: ' + error.message + '</td></tr>';
       }
     }
     
@@ -1061,29 +1281,39 @@
       if (useMockData) return; // Use static data for demo
       
       try {
-        const data = await fetchFromSheet('Bazzetting');
+        const result = await fetchFromSheet('Bazzetting');
+        const data = result.data;
+        const headers = result.headers;
+        
         if (data && data.length > 0) {
-          // Calculate stats
-          let totalData = 0;
-          let totalKebutuhan = 0;
-          let totalSisa = 0;
+          // Get totals from last row (assuming it's the totals row)
+          const lastRow = data[data.length - 1];
+          const totalData = data.length - 1; // Exclude totals row
+          const colKebutuhan = getColIndex(headers, 'kebutuhan');
+          const colSisa = getColIndex(headers, 'sisa');
+          const totalKebutuhan = colKebutuhan >= 0 ? parseInt(lastRow[colKebutuhan]) || 0 : 0;
+          const totalSisa = colSisa >= 0 ? parseInt(lastRow[colSisa]) || 0 : 0;
           
-          const tableHtml = data.map(row => {
-            const instansi = row[0] || '';
-            const jenisJabfung = row[1] || '';
-            const jenjang = row[2] || '';
-            const kebutuhan = parseInt(row[3]) || 0;
-            const pemangku = row[4] || '';
-            const lowongan = row[5] || '';
-            const formasi = row[6] || '';
-            const pemangkuSekarang = row[7] || '';
-            const pemangkuDisetujui = row[8] || '';
-            const sisa = row[9] || '';
+          const tableHtml = data.map((row, i) => {
+            const instansi = getCellValue(row, headers, 'instansi');
+            const jenisJabfung = getCellValue(row, headers, 'jenis jabfung') || getCellValue(row, headers, 'jenis');
+            const jenjang = getCellValue(row, headers, 'jenjang');
+            const kebutuhan = parseInt(getCellValue(row, headers, 'kebutuhan', '0')) || 0;
+            const pemangku = getCellValue(row, headers, 'pemangku');
+            const lowongan = getCellValue(row, headers, 'lowongan');
+            const formasi = getCellValue(row, headers, 'formasi');
+            const pemangkuSekarang = getCellValue(row, headers, 'pemangku sekarang');
+            const pemangkuDisetujui = getCellValue(row, headers, 'disetujui');
+            const sisa = getCellValue(row, headers, 'sisa');
             
-            totalData++;
-            totalKebutuhan += kebutuhan;
+            // Check if this is a totals row (first column is empty or contains "TOTAL")
+            const isTotalRow = !instansi || String(instansi).toUpperCase().includes('TOTAL') || String(instansi).toUpperCase().includes('JUMLAH');
+            
+            if (isTotalRow) {
+              return ''; // Skip totals row in table
+            }
+            
             const sisaNum = parseInt(sisa) || 0;
-            totalSisa += sisaNum;
             
             return `
               <tr class="hover:bg-gray-50">
@@ -1101,7 +1331,7 @@
             `;
           }).join('');
           
-          // Update stats
+          // Update stats from last row
           document.getElementById('bazzetTotalUnit').textContent = totalData;
           document.getElementById('bazzetTerpenuhi').textContent = totalKebutuhan;
           document.getElementById('bazzetKekurangan').textContent = totalSisa;
@@ -1109,6 +1339,7 @@
         }
       } catch (error) {
         console.error('Error loading bazzetting:', error);
+        document.getElementById('bazzetTable').innerHTML = '<tr><td colspan="10" class="px-6 py-8 text-center text-red-500">Error: ' + error.message + '</td></tr>';
       }
     }
 
@@ -1275,6 +1506,151 @@
         submitBtn.disabled = false;
       }
     });
+
+    // Show Photo Modal - Fullscreen
+    function showPhotoModal(photoUrl, nama) {
+      const modal = document.getElementById('photoModal');
+      const img = document.getElementById('photoModalImg');
+      const title = document.getElementById('photoModalTitle');
+      
+      if (photoUrl && photoUrl.includes('drive.google.com')) {
+        img.src = photoUrl;
+      } else if (photoUrl) {
+        img.src = photoUrl;
+      }
+      
+      title.textContent = nama;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    
+    function closePhotoModal() {
+      const modal = document.getElementById('photoModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    async function viewDetailPeserta(nik) {
+      const modal = document.getElementById('detailModal');
+      const content = document.getElementById('detailModalContent');
+      
+      try {
+        const result = await fetchFromSheet('Formulir');
+        const data = result.data;
+        const headers = result.headers;
+        const peserta = data.find(row => getCellValue(row, headers, 'nik') == nik);
+        
+        if (!peserta) {
+          alert('Data peserta tidak ditemukan');
+          return;
+        }
+        
+        const fotoUrl = getCellValue(peserta, headers, 'upload foto') || getCellValue(peserta, headers, 'foto') || getCellValue(peserta, headers, 'foto url');
+        const fotoId = getCellValue(peserta, headers, 'id foto drive') || getCellValue(peserta, headers, 'foto id');
+        
+        // Get Drive direct link if it's a Drive file
+        let directPhotoUrl = fotoUrl;
+        if (fotoUrl && fotoUrl.includes('drive.google.com')) {
+          // Convert to direct link
+          const fileIdMatch = fotoUrl.match(/\/d\/([^\/]+)/);
+          if (fileIdMatch) {
+            directPhotoUrl = 'https://drive.google.com/uc?export=view&id=' + fileIdMatch[1];
+          }
+        } else if (fotoId) {
+          directPhotoUrl = 'https://drive.google.com/uc?export=view&id=' + fotoId;
+        }
+        
+        content.innerHTML = `
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex-shrink-0">
+              ${directPhotoUrl ? 
+                `<img src="${directPhotoUrl}" alt="Foto Peserta" class="w-48 h-64 object-cover rounded-lg border-2 border-blue-500 shadow-lg" 
+                     onerror="this.src='https://via.placeholder.com/192x256?text=Foto+Tidak+Ada'">
+                  <a href="${fotoUrl}" target="_blank" class="block mt-2 text-center text-blue-600 hover:underline text-sm">Buka Foto Full</a>` :
+                `<div class="w-48 h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <span class="text-gray-500">Tidak ada foto</span>
+                </div>`
+              }
+            </div>
+            <div class="flex-grow">
+              <h3 class="text-xl font-bold text-gray-800 mb-4">${getCellValue(peserta, headers, 'nama')}</h3>
+              <div class="grid grid-cols-2 gap-3 text-sm">
+                <div><span class="font-semibold text-gray-600">NIK:</span> ${getCellValue(peserta, headers, 'nik')}</div>
+                <div><span class="font-semibold text-gray-600">NIP:</span> ${getCellValue(peserta, headers, 'nip')}</div>
+                <div><span class="font-semibold text-gray-600">No. HP:</span> ${getCellValue(peserta, headers, 'no hp') || getCellValue(peserta, headers, 'hp')}</div>
+                <div><span class="font-semibold text-gray-600">Email:</span> ${getCellValue(peserta, headers, 'email')}</div>
+                <div class="col-span-2"><span class="font-semibold text-gray-600">Unit Kerja:</span> ${getCellValue(peserta, headers, 'unit kerja')}</div>
+                <div><span class="font-semibold text-gray-600">Jenis Jabatan:</span> ${getCellValue(peserta, headers, 'jenis jabatan')}</div>
+                <div><span class="font-semibold text-gray-600">Jenjang Jabatan:</span> ${getCellValue(peserta, headers, 'jenjang')}</div>
+                <div><span class="font-semibold text-gray-600">Pangkat:</span> ${getCellValue(peserta, headers, 'pangkat') || getCellValue(peserta, headers, 'golongan')}</div>
+                <div><span class="font-semibold text-gray-600">Nilai PAK:</span> ${getCellValue(peserta, headers, 'nilai pak')}</div>
+                <div><span class="font-semibold text-gray-600">No. STR:</span> ${getCellValue(peserta, headers, 'no str')}</div>
+                <div><span class="font-semibold text-gray-600">Kategori:</span> ${getCellValue(peserta, headers, 'kategori')}</div>
+                <div class="col-span-2"><span class="font-semibold text-gray-600">Jabfung Tujuan:</span> ${getCellValue(peserta, headers, 'jabfung tujuan')}</div>
+                <div class="col-span-2"><span class="font-semibold text-gray-600">Jenjang Tujuan:</span> ${getCellValue(peserta, headers, 'jenjang tujuan')}</div>
+                <div class="col-span-2 mt-2 pt-2 border-t">
+                  <span class="font-semibold text-gray-600">Status:</span>
+                  <div class="flex gap-2 mt-1">
+                    <span class="px-2 py-1 rounded text-xs ${getCellValue(peserta, headers, 'status verifikasi') === 'Lolos Administrasi' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                      ${getCellValue(peserta, headers, 'status verifikasi') || 'Belum Diverifikasi'}
+                    </span>
+                    <span class="px-2 py-1 rounded text-xs ${getCellValue(peserta, headers, 'status ujian') === 'Lulus' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                      ${getCellValue(peserta, headers, 'status ujian') || 'Belum Ujian'}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-span-2 mt-2 pt-2 border-t">
+                  <span class="font-semibold text-gray-600">Rekomendasi:</span>
+                  <div class="mt-1 px-2 py-1 rounded text-xs ${getCellValue(peserta, headers, 'keputusan') === 'Direkomendasikan' ? 'bg-green-100 text-green-800' : getCellValue(peserta, headers, 'keputusan') === 'Tidak Direkomendasikan' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">
+                    ${getCellValue(peserta, headers, 'keputusan') || getCellValue(peserta, headers, 'rekomendasi') || '-'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        modal.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error memuat data: ' + error.message);
+      }
+    }
+
+    // Debug - Show all columns from Formulir sheet
+    async function debugShowAllColumns() {
+      try {
+        const result = await fetchFromSheet('Formulir');
+        const data = result.data;
+        const headers = result.headers;
+        
+        if (data && data.length > 0) {
+          // Show headers with their indices
+          let html = '<h3>Header Names:</h3><table border="1" style="border-collapse:collapse;width:100%;margin-bottom:20px">';
+          headers.forEach((h, i) => {
+            html += '<tr><td style="padding:5px;width:50px"><strong>' + i + '</strong></td><td style="padding:5px">' + h + '</td></tr>';
+          });
+          html += '</table>';
+          
+          // Show first 3 rows of data
+          html += '<h3>Data (3 rows):</h3><table border="1" style="border-collapse:collapse;width:100%">';
+          html += '<tr><th style="padding:5px;background:#eee">#</th>' + headers.map((h, i) => '<th style="padding:5px;background:#eee">' + i + ': ' + h + '</th>').join('') + '</tr>';
+          data.slice(0, 3).forEach((row, i) => {
+            html += '<tr><td style="padding:5px"><strong>' + i + '</strong></td>';
+            for (let j = 0; j < headers.length; j++) {
+              html += '<td style="padding:5px">' + (row[j] || '') + '</td>';
+            }
+            html += '</tr>';
+          });
+          html += '</table>';
+          
+          const win = window.open('', '_blank');
+          win.document.write('<html><head><title>Debug - Column Mapping</title></head><body><h2>Struktur Kolom Sheet Peserta</h2>' + html + '</body></html>');
+        } else {
+          alert('Tidak ada data');
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    }
 
     // Initialize
     initCharts();

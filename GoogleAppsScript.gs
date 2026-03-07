@@ -50,24 +50,39 @@ function doPost(e) {
   }
 }
 
-// Save participant data to "Peserta" sheet
+// Save participant data to "Formulir" sheet
 function saveToSpreadsheet(data) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let sheet = ss.getSheetByName('Peserta');
+    let sheet = ss.getSheetByName('Formulir');
     
-    // Create "Peserta" sheet if not exists
+    // Create "Formulir" sheet if not exists
     if (!sheet) {
-      sheet = ss.insertSheet('Peserta');
+      sheet = ss.insertSheet('Formulir');
       // Add headers matching user's structure
       const headers = [
-        'Timestamp', 'Periode', 'Nama Lengkap', 'NIK', 'NIP', 
-        'Nomor Telpon/WA', 'Email Aktif', 'Unit Kerja', 'Jenis Jabatan', 
-        'Jenjang Jabatan', 'Pangkat dan Golongan', 'Nilai PAK terakhir', 
-        'Nomor STR', 'Kategori Penjenjangan Jabatan', 
-        'Nama Jabatan Fungsional Yang Dituju', 'Jenjang Jabatan Tujuan',
-        'Upload Foto Latar Merah', 'Upload Kelengkapan Dokumen',
-        'Status Verifikasi', 'Status Ujian', 'Keputusan Tim Pengelola UKOM', 'ID FOTO DRIVE'
+        'Timestamp',
+        'Periode',
+        'Nama Lengkap',
+        'NIK',
+        'NIP',
+        'Nomor Telpon/WA',
+        'Email Aktif',
+        'Unit Kerja',
+        'Jenis Jabatan',
+        'Jenjang Jabatan',
+        'Pangkat dan Golongan',
+        'Nilai PAK terakhir',
+        'Nomor STR',
+        'Kategori Penjenjangan Jabatan',
+        'Nama Jabatan Fungsional Yang Dituju',
+        'Jenjang Jabatan Tujuan',
+        'Upload Foto Latar Merah',
+        'Upload Kelengkapan Dokumen',
+        'Status Verifikasi',
+        'Status Ujian',
+        'Keputusan Tim Pengelola UKOM',
+        'ID FOTO DRIVE'
       ];
       sheet.appendRow(headers);
     }
@@ -193,7 +208,7 @@ function getDataFromSheet(sheetName) {
 function updateParticipantStatus(data) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName('Peserta');
+    const sheet = ss.getSheetByName('Formulir');
     
     if (!sheet) {
       return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Sheet not found' }))
@@ -203,9 +218,9 @@ function updateParticipantStatus(data) {
     const dataRange = sheet.getDataRange();
     const rows = dataRange.getValues();
     
-    // Find row by NIK
+    // Find row by NIK (Column D = index 3)
     for (let i = 1; i < rows.length; i++) {
-      if (rows[i][3] == data.nik) { // Column D is NIK (index 3)
+      if (String(rows[i][3]).trim() == String(data.nik).trim()) {
         // Update status columns (S=18: Status Verifikasi, T=19: Status Ujian)
         if (data.status_verifikasi) {
           sheet.getRange(i + 1, 19).setValue(data.status_verifikasi);
@@ -235,7 +250,7 @@ function updateParticipantStatus(data) {
 function deleteParticipant(data) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName('Peserta');
+    const sheet = ss.getSheetByName('Formulir');
     
     if (!sheet) {
       return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Sheet not found' }))
@@ -247,7 +262,7 @@ function deleteParticipant(data) {
     
     // Find row by NIK
     for (let i = 1; i < rows.length; i++) {
-      if (rows[i][3] == data.nik) { // Column D is NIK (index 3)
+      if (String(rows[i][3]).trim() == String(data.nik).trim()) {
         sheet.deleteRow(i + 1);
         
         return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Participant deleted' }))
