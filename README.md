@@ -1,193 +1,141 @@
 # SIKOMJAKES - Sistem Kompetensi Jabatan Kesehatan
 
-Aplikasi web enterprise responsive dengan desain modern government dashboard untuk pengelolaan Uji Kompetensi Jabatan Fungsional Kesehatan.
+Aplikasi web enterprise responsive dengan desain modern government dashboard.
+
+## Cara Menggunakan
+
+### 1. Buka Langsung (Mode Demo)
+Buka `sikomjakes.html` di browser - tanpa install apapun!
+
+### 2. Menggunakan Google Sheets + Drive (Untuk Produksi)
+
+#### Step 1: Siapkan Google Sheets
+1. Buat Google Sheets baru (atau gunakan yang sudah ada)
+2. Copy Spreadsheet ID dari URL:
+   - Dari: `https://docs.google.com/spreadsheets/d/1Ox0u5WMWcpqk5u1rHvQ5x1doZn9787FZGf_zGRDVUOo/edit`
+   - ID: `1Ox0u5WMWcpqk5u1rHvQ5x1doZn9787FZGf_zGRDVUOo`
+3. Rename sheet menjadi "Peserta"
+4. Tambahkan header di baris 1 (kolom A-T):
+   - A: Timestamp
+   - B: Periode
+   - C: Nama Lengkap
+   - D: NIK
+   - E: NIP
+   - F: Nomor Telpon
+   - G: Email
+   - H: Unit Kerja
+   - I: Jenis Jabatan
+   - J: Jenjang Jabatan
+   - K: Pangkat Golongan
+   - L: Nilai PAK
+   - M: Nomor STR
+   - N: Kategori Penjenjangan
+   - O: Jabfung Tujuan
+   - P: Jenjang Tujuan
+   - Q: Foto URL
+   - R: Dokumen URL
+   - S: Status Verifikasi
+   - T: Status Ujian
+
+#### Step 2: Siapkan Google Drive
+1. Buat folder untuk upload dokumen
+2. Copy Folder ID dari URL:
+   - Dari: `https://drive.google.com/drive/folders/1GenTbOhj92qA-DAVHZTXRYqIxq65CVDF`
+   - Folder ID: `1GenTbOhj92qA-DAVHZTXRYqIxq65CVDF`
+
+#### Step 3: Setup Google Apps Script
+1. Buka https://script.google.com
+2. New Project
+3. Copy isi file `GoogleAppsScript.gs`
+4. Di dalam kode, pastikan:
+   ```javascript
+   const SPREADSHEET_ID = '1Ox0u5WMWcpqk5u1rHvQ5x1doZn9787FZGf_zGRDVUOo';
+   const DRIVE_FOLDER_ID = '1GenTbOhj92qA-DAVHZTXRYqIxq65CVDF';
+   ```
+5. Deploy > New Deployment > Web App
+   - Execute as: Me
+   - Who has access: Anyone
+6. Copy Deployment URL (format: `https://script.google.com/macros/s/XXXXX/exec`)
+
+#### Step 4: Update HTML
+Buka `sikomjakes.html`, cari bagian:
+```javascript
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5WMWcpqk5u1rHvQ5x1doZn9787FZGf_zGRDVUOo/exec';
+const DRIVE_FOLDER_ID = '1GenTbOhj92qA-DAVHZTXRYqIxq65CVDF';
+let useMockData = false;
+```
+
+Ganti SCRIPT_URL dengan URL deployment Anda.
+
+#### Step 5: Testing
+1. Buka sikomjakes.html di browser
+2. Buka Developer Tools (F12) > Console
+3. Isi formulir pendaftaran dan submit
+4. Periksa console untuk melihat response
+5. Cek Google Sheets untuk memastikan data masuk
+6. Cek Google Drive untuk memastikan file ter-upload
+
+---
+
+## Fitur
+
+- **Dashboard**: Animated counters, Charts (Peserta per Tahun, Jabfung, Kelulusan, Provinsi)
+- **Menu Utama** (tanpa login):
+  - Formasi Jabfung KemenPAN
+  - Bazzetting Formasi
+  - Formulir Pendaftaran (18 kolom)
+  - Daftar Peserta UKOM
+- **Panel Admin** (login: admin/admin123)
+
+### Kolom Formulir Pendaftaran:
+1. Timestamp
+2. Periode
+3. Nama Lengkap
+4. NIK
+5. NIP
+6. Nomor Telpon/WA
+7. Email Aktif
+8. Unit Kerja
+9. Jenis Jabatan
+10. Jenjang Jabatan
+11. Pangkat dan Golongan
+12. Nilai PAK terakhir
+13. Nomor STR
+14. Kategori Penjenjangan Jabatan
+15. Nama Jabatan Fungsional Yang Dituju
+16. Jenjang Jabatan Tujuan
+17. Upload Foto Latar Merah
+18. Upload Kelengkapan Dokumen
+
+---
+
+## Troubleshooting
+
+### Data tidak masuk ke Google Sheets?
+1. Pastikan Google Apps Script sudah di-deploy sebagai Web App
+2. Pastikan "Who has access" adalah "Anyone" (bukan "Only myself")
+3. Buka Console (F12) untuk melihat error message
+4. Cek apakah Spreadsheet ID di Apps Script sudah benar
+
+### File tidak ter-upload ke Google Drive?
+1. Pastikan Folder ID sudah benar
+2. Cek apakah folder sudah di-share dengan benar
+3. Periksa error di Console
+
+### Menggunakan Mode Demo
+Jika masih bermasalah, ubah di sikomjakes.html:
+```javascript
+let useMockData = true; // Gunakan data demo
+```
+
+---
 
 ## Tech Stack
 
-- **Frontend**: React 18 + Vite + TailwindCSS
-- **Backend**: Node.js + Express.js
-- **Database**: MySQL
-- **Charts**: ApexCharts
-- **UI**: Glassmorphism, Modern Dashboard Design
-
-## Struktur Project
-
-```
-SIKOMJAKES/
-├── sikomjakes-backend/     # Backend API
-│   ├── config/             # Database configuration
-│   ├── middleware/         # Auth & audit middleware
-│   ├── routes/            # API routes
-│   ├── server.js          # Entry point
-│   └── .env               # Environment variables
-│
-└── sikomjakes-frontend/   # Frontend React
-    ├── src/
-    │   ├── components/    # Layout components
-    │   ├── context/       # React Context
-    │   ├── pages/         # Page components
-    │   └── services/      # API services
-    └── public/            # Static assets
-```
-
-## Cara Install & Jalankan
-
-### Prerequisites
-- Node.js v18+
-- MySQL v8.0+
-
-### Step 1: Setup Database MySQL
-
-1. Buat database baru:
-```sql
-CREATE DATABASE sikomjakes;
-```
-
-2. Konfigurasi koneksi di `sikomjakes-backend/.env`:
-```env
-PORT=3000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=sikomjakes
-JWT_SECRET=sikomjakes_secret_key_2024
-NODE_ENV=development
-```
-
-### Step 2: Install & Jalankan Backend
-
-```bash
-# Pindah ke folder backend
-cd sikomjakes-backend
-
-# Install dependencies
-npm install
-
-# Jalankan server (akan otomatis buat tabel)
-npm start
-```
-
-Server akan berjalan di `http://localhost:3000`
-
-### Step 3: Install & Jalankan Frontend
-
-Buka terminal baru:
-
-```bash
-# Pindah ke folder frontend
-cd sikomjakes-frontend
-
-# Install dependencies
-npm install
-
-# Jalankan development server
-npm run dev
-```
-
-Frontend akan berjalan di `http://localhost:5173`
-
-## Akun Demo
-
-Setelah aplikasi berjalan, login dengan:
-
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | admin | admin123 |
-
-## Fitur Utama
-
-### 1. Dashboard
-- Statistik real-time dengan animated counters
-- Grafik Peserta UKOM per Tahun
-- Grafik Peserta per Jenis Jabfung
-- Grafik Kelulusan
-- Grafik Provinsi Peserta
-
-### 2. Menu Utama
-
-#### Formasi Jabfung KemenPAN
-- Tabel data formasi
-- Search & Filter
-- Export Excel & PDF
-- Pagination
-
-#### Bazzetting Formasi
-- Distribusi kebutuhan SDM
-- Grafik kekurangan SDM kesehatan
-
-#### Formulir Pendaftaran
-- Form lengkap data peserta
-- Validasi NIK unik
-- Upload dokumen (SK, STR, Ijazah, Foto)
-- Popup peringatan jika NIK duplikat
-
-#### Daftar Peserta UKOM
-- Tabel peserta
-- Filter by Jabfung, Instansi, Status
-- View detail peserta
-
-### 3. Panel Admin (Login Required)
-
-#### CRUD Data
-- Data Jabfung
-- Data Formasi
-- Data Instansi
-
-#### Seleksi Peserta
-- Verifikasi administrasi
-- Status: Belum Diverifikasi, Lolos, Tidak Lolos
-- Catatan admin
-
-#### Manajemen Dokumen
-- Preview dokumen
-- Validasi dokumen
-
-#### Manajemen Hasil UKOM
-- Input nilai teori, praktik, wawancara
-- Status kelulusan (LULUS/TIDAK LULUS)
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/login` - Login
-- `POST /api/auth/register` - Register
-- `GET /api/auth/me` - Get current user
-
-### Dashboard
-- `GET /api/dashboard/stats` - Statistics
-- `GET /api/dashboard/chart/tahun` - Chart by year
-- `GET /api/dashboard/chart/jabfung` - Chart by jabfung
-- `GET /api/dashboard/chart/kelulusan` - Chart kelulusan
-- `GET /api/dashboard/chart/provinsi` - Chart by province
-
-### Jabfung
-- `GET /api/jabfung` - List all
-- `POST /api/jabfung` - Create (admin)
-- `PUT /api/jabfung/:id` - Update (admin)
-- `DELETE /api/jabfung/:id` - Delete (admin)
-
-### Formasi
-- `GET /api/formasi` - List all
-- `GET /api/formasi/stats/bazzetting` - Bazzetting data
-
-### Peserta
-- `GET /api/peserta` - List all
-- `POST /api/peserta` - Register
-- `GET /api/peserta/check-nik/:nik` - Check NIK
-- `POST /api/peserta/:id/dokumen` - Upload document
-
-### Admin
-- `PUT /api/admin/peserta/:id/verify` - Verify participant
-- `PUT /api/admin/peserta/:id/hasil` - Input exam results
-- `GET /api/admin/audit-logs` - Audit logs
-
-## Desain UI
-
-- **Warna**: Biru kesehatan (#3b82f6), Putih, Teal (#14b8a6)
-- **Komponen**: Glassmorphism cards, Modern tables
-- **Animasi**: Smooth transitions, Animated counters
-- **Responsif**: Desktop, Tablet, Mobile
+- **Frontend**: HTML5 + TailwindCSS + ApexCharts
+- **Backend Data**: Google Sheets (via Apps Script)
+- **Backend Files**: Google Drive
 
 ## Lisensi
 
-Copyright © 2024 SIKOMJAKES. All rights reserved.
+Copyright © 2024 SIKOMJAKES

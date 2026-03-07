@@ -4,7 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIKOMJAKES - Sistem Kompetensi Jabatan Kesehatan</title>
+  
+  <!-- Tailwind CSS (Production Build - Inline) -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            health: { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -235,11 +250,9 @@
                   <tr>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">No</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama Jabatan</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenjang</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Unit Kerja</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jumlah</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Tahun</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenjang Jabatan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Persetujuan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Kebutuhan JF</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100" id="formasiTable">
@@ -259,8 +272,8 @@
                   <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500">Total Unit</p>
-                  <p class="text-2xl font-bold text-gray-800">125</p>
+                  <p class="text-sm text-gray-500">Total Data</p>
+                  <p class="text-2xl font-bold text-gray-800" id="bazzetTotalUnit">0</p>
                 </div>
               </div>
             </div>
@@ -270,8 +283,8 @@
                   <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500">Terpenuhi</p>
-                  <p class="text-2xl font-bold text-gray-800">78</p>
+                  <p class="text-sm text-gray-500">Total Kebutuhan</p>
+                  <p class="text-2xl font-bold text-gray-800" id="bazzetTerpenuhi">0</p>
                 </div>
               </div>
             </div>
@@ -281,43 +294,36 @@
                   <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500">Kekurangan</p>
-                  <p class="text-2xl font-bold text-gray-800">47</p>
+                  <p class="text-sm text-gray-500">Total Sisa</p>
+                  <p class="text-2xl font-bold text-gray-800" id="bazzetKekurangan">0</p>
                 </div>
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="glass rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">Grafik Kekurangan SDM</h3>
-              <div id="chartSDM"></div>
-            </div>
-            <div class="glass rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Kebutuhan per Unit</h3>
-              <div class="space-y-3 max-h-80 overflow-y-auto">
-                <div class="p-3 bg-gray-50 rounded-lg">
-                  <div class="flex justify-between items-center mb-2">
-                    <span class="font-medium">RSUD Dr. Soetomo</span>
-                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Terpenuhi</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-2 text-sm">
-                    <div><p class="text-gray-500">Kebutuhan</p><p class="font-semibold">150</p></div>
-                    <div><p class="text-gray-500">Tersedia</p><p class="font-semibold">165</p></div>
-                    <div><p class="text-gray-500">Selisih</p><p class="font-semibold text-green-600">+15</p></div>
-                  </div>
-                </div>
-                <div class="p-3 bg-gray-50 rounded-lg">
-                  <div class="flex justify-between items-center mb-2">
-                    <span class="font-medium">RSUPN Dr. Cipto M.</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Kekurangan</span>
-                  </div>
-                  <div class="grid grid-cols-3 gap-2 text-sm">
-                    <div><p class="text-gray-500">Kebutuhan</p><p class="font-semibold">200</p></div>
-                    <div><p class="text-gray-500">Tersedia</p><p class="font-semibold">142</p></div>
-                    <div><p class="text-gray-500">Selisih</p><p class="font-semibold text-red-600">-58</p></div>
-                  </div>
-                </div>
-              </div>
+          
+          <!-- Tabel Bazzetting dengan kolom sesuai Google Sheets -->
+          <div class="glass rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Data Bazzetting Formasi</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Instansi/Institusi<br>Pelayanan Kesehatan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenis Jabatan<br>Fungsional</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenjang<br>Jabatan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Kebutuhan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Pemangku</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Lowongan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Formasi</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama-Nama Pemangku<br>Saat Ini</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama-Nama Pemangku<br>Yang Disetujui</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Sisa</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100" id="bazzetTable">
+                  <tr><td colspan="10" class="px-6 py-8 text-center text-gray-500">Memuat data...</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -332,35 +338,36 @@
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">NIK *</label>
-                  <input type="text" name="nik" maxlength="16" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="16 digit NIK" required>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Periode *</label>
+                  <select name="periode" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Periode</option>
+                    <option value="2024-1">2024 Semester 1</option>
+                    <option value="2024-2">2024 Semester 2</option>
+                    <option value="2025-1">2025 Semester 1</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Timestamp</label>
+                  <input type="text" value="Auto-generated" class="w-full px-4 py-2.5 border rounded-lg bg-gray-50" disabled>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap *</label>
                   <input type="text" name="nama" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Tempat Lahir *</label>
-                  <input type="text" name="tempat_lahir" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">NIK *</label>
+                  <input type="text" name="nik" maxlength="16" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="16 digit NIK" required>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir *</label>
-                  <input type="date" name="tanggal_lahir" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">NIP *</label>
+                  <input type="text" name="nip" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin *</label>
-                  <select name="jenis_kelamin" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
-                    <option value="">Pilih</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telpon/WA *</label>
                   <input type="tel" name="nomor_hp" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                 </div>
-                <div class="md:col-span-2">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Email Aktif *</label>
                   <input type="email" name="email" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                 </div>
               </div>
@@ -373,14 +380,22 @@
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Jabatan Fungsional *</label>
-                  <select name="jabfung" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
-                    <option value="">Pilih Jabatan</option>
-                    <option value="1">Dokter Gigi - Ahli Pertama</option>
-                    <option value="2">Perawat - Terampil</option>
-                    <option value="3">Bidan - Terampil</option>
-                    <option value="4">Apoteker - Ahli Pertama</option>
-                    <option value="5">Analis Kesehatan - Terampil</option>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja *</label>
+                  <select name="unit_kerja" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Unit Kerja</option>
+                    <option value="1">RSUD Dr. Soetomo</option>
+                    <option value="2">RSUPN Dr. Cipto Mangunkusumo</option>
+                    <option value="3">Puskesmas Kec. Wonokromo</option>
+                    <option value="4">Dinkes Provinsi Jawa Timur</option>
+                    <option value="5">RSUD Kota Surabaya</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Jabatan *</label>
+                  <select name="jenis_jabatan" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Jenis Jabatan</option>
+                    <option value="Fungsional">Jabatan Fungsional</option>
+                    <option value="Struktural">Jabatan Struktural</option>
                   </select>
                 </div>
                 <div>
@@ -391,21 +406,83 @@
                     <option value="Ahli Pertama">Ahli Pertama</option>
                     <option value="Ahli Muda">Ahli Muda</option>
                     <option value="Ahli Madya">Ahli Madya</option>
+                    <option value="Ahli Utama">Ahli Utama</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Instansi *</label>
-                  <select name="instansi" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
-                    <option value="">Pilih Instansi</option>
-                    <option value="1">RSUD Dr. Soetomo</option>
-                    <option value="2">RSUPN Dr. Cipto Mangunkusumo</option>
-                    <option value="3">Puskesmas Kec. Wonokromo</option>
-                    <option value="4">Dinkes Provinsi Jawa Timur</option>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Pangkat dan Golongan *</label>
+                  <select name="pangkat_gol" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Pangkat/Gol</option>
+                    <option value="I/a">I/a - Jamban</option>
+                    <option value="I/b">I/b - Jamban</option>
+                    <option value="I/c">I/c - Jamban</option>
+                    <option value="I/d">I/d - Jamban</option>
+                    <option value="II/a">II/a - Pengatur</option>
+                    <option value="II/b">II/b - Pengatur</option>
+                    <option value="II/c">II/c - Pengatur</option>
+                    <option value="II/d">II/d - Pengatur</option>
+                    <option value="III/a">III/a - Penata</option>
+                    <option value="III/b">III/b - Penata</option>
+                    <option value="III/c">III/c - Penata</option>
+                    <option value="III/d">III/d - Penata</option>
+                    <option value="IV/a">IV/a - Pembina</option>
+                    <option value="IV/b">IV/b - Pembina</option>
+                    <option value="IV/c">IV/c - Pembina</option>
+                    <option value="IV/d">IV/d - Pembina</option>
+                    <option value="IV/e">IV/e - Pembina Utama</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja *</label>
-                  <input type="text" name="unit_kerja" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nilai PAK Terakhir *</label>
+                  <input type="number" step="0.01" name="nilai_pak" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00" required>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nomor STR *</label>
+                  <input type="text" name="nomor_str" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                Jabatan Fungsional Tujuan
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Penjenjangan Jabatan *</label>
+                  <select name="kategori_penjenjangan" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="Kesehatan">Kesehatan</option>
+                    <option value="Pendidikan">Pendidikan</option>
+                    <option value="Teknis">Teknis</option>
+                    <option value="Fungsional">Fungsional Umum</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nama Jabatan Fungsional Yang Dituju *</label>
+                  <select name="jabfung_tujuan" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Jabatan</option>
+                    <option value="1">Dokter Gigi</option>
+                    <option value="2">Perawat</option>
+                    <option value="3">Bidan</option>
+                    <option value="4">Apoteker</option>
+                    <option value="5">Analis Kesehatan</option>
+                    <option value="6">Tenaga Kesehatan Masyarakat</option>
+                    <option value="7">Tenaga Gizi</option>
+                    <option value="8">Fisioterapis</option>
+                  </select>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Jenjang Jabatan Tujuan *</label>
+                  <select name="jenjang_tujuan" class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="">Pilih Jenjang Tujuan</option>
+                    <option value="Terampil">Terampil</option>
+                    <option value="Ahli Pertama">Ahli Pertama</option>
+                    <option value="Ahli Muda">Ahli Muda</option>
+                    <option value="Ahli Madya">Ahli Madya</option>
+                    <option value="Ahli Utama">Ahli Utama</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -417,20 +494,14 @@
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">SK Jabatan</label>
-                  <input type="file" name="sk_jabatan" class="w-full px-4 py-2 border rounded-lg" accept=".pdf,.jpg,.jpeg,.png">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Upload Foto Latar Merah (JPEG) *</label>
+                  <input type="file" name="foto" accept="image/jpeg" class="w-full px-4 py-2 border rounded-lg" required>
+                  <p class="text-xs text-gray-500 mt-1">Format: JPG/JPEG, Max 2MB</p>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">STR</label>
-                  <input type="file" name="str" class="w-full px-4 py-2 border rounded-lg" accept=".pdf,.jpg,.jpeg,.png">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Ijazah</label>
-                  <input type="file" name="ijazah" class="w-full px-4 py-2 border rounded-lg" accept=".pdf,.jpg,.jpeg,.png">
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
-                  <input type="file" name="foto" class="w-full px-4 py-2 border rounded-lg" accept=".jpg,.jpeg,.png">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Upload Kelengkapan Dokumen *</label>
+                  <input type="file" name="dokumen" multiple class="w-full px-4 py-2 border rounded-lg" required>
+                  <p class="text-xs text-gray-500 mt-1">Upload dokumen 1, 2, dst (PDF/JPG)</p>
                 </div>
               </div>
             </div>
@@ -463,13 +534,13 @@
               <table class="w-full">
                 <thead class="bg-blue-50">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">NIK</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">No</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jabfung</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Instansi</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Tanggal Daftar</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Status Verif</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Status Ujian</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Unit Kerja</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Nama Jabatan Fungsional</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Jenjang Jabatan</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Foto</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-blue-800">Status</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100" id="pesertaTable">
@@ -539,24 +610,286 @@
   <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden"></div>
 
   <script>
-    // Data mock untuk demo
-    const mockFormasi = [
-      { no: 1, nama: 'Dokter Gigi', jenjang: 'Ahli Pertama', unit: 'RSUD Dr. Soetomo', jumlah: 25, tahun: 2024, status: 'Aktif' },
-      { no: 2, nama: 'Perawat', jenjang: 'Terampil', unit: 'RSUD Dr. Soetomo', jumlah: 150, tahun: 2024, status: 'Aktif' },
-      { no: 3, nama: 'Bidan', jenjang: 'Terampil', unit: 'Puskesmas Kec. Wonokromo', jumlah: 30, tahun: 2024, status: 'Aktif' },
-      { no: 4, nama: 'Apoteker', jenjang: 'Ahli Pertama', unit: 'RSUPN Dr. Cipto M.', jumlah: 20, tahun: 2024, status: 'Aktif' },
-      { no: 5, nama: 'Analis Kesehatan', jenjang: 'Terampil', unit: 'Dinkes Provinsi Jawa Timur', jumlah: 15, tahun: 2024, status: 'Nonaktif' },
+    // ============================================
+    // KONFIGURASI GOOGLE APPS SCRIPT
+    // ============================================
+    // INSTRUKSI PENGGUNAAN:
+    // 1. Buka https://script.google.com
+    // 2. Buat Project Baru
+    // 3. Copy kode dari file GoogleAppsScript.gs
+    // 4. Update SPREADSHEET_ID dan DRIVE_FOLDER_ID di dalam kode
+    // 5. Deploy > New Deployment > Web App
+    // 6. Isi: Execute as: Me, Who has access: Anyone
+    // 7. Copy Deployment URL dan paste di bawah ini
+    // ============================================
+    
+    // Spreadsheet ID: 1Ox0u5WMWcpqk5u1rHvQ5x1doZn9787FZGf_zGRDVUOo
+    // Drive Folder ID: 1GenTbOhj92qA-DAVHZTXRYqIxq65CVDF
+    
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgbalc9v6lwHElsFK3KC-T2VJW09rsP7mmihjNzzD_YpxGHoiAyv6loGar8oEG2p5ukw/exec';
+    const DRIVE_FOLDER_ID = '1GenTbOhj92qA-DAVHZTXRYqIxq65CVDF'; // ID folder Google Drive untuk upload
+
+    // Data akan diambil dari Google Sheets
+    // Untuk demo, gunakan data di bawah ini
+    const demoStats = {
+      totalPeserta: 12458,
+      totalJabfung: 156,
+      totalFormasi: 8924,
+      pesertaLulus: 8234,
+      pesertaTidakLulus: 4224
+    };
+
+    const demoChartData = {
+      tahun: [1200, 1450, 1680, 2100, 2580, 3100, 3800, 4500, 5200, 5800, 6500, 7200],
+      jabfung: { labels: ['Perawat', 'Bidan', 'Dokter Gigi', 'Apoteker', 'Analis Kesehatan'], values: [3200, 4500, 2100, 1500, 800] },
+      kelulusan: { lulus: 8234, tidakLulus: 4224, belumUjian: 0 },
+      provinsi: { labels: ['Jawa Timur', 'Jawa Barat', 'Jawa Tengah', 'DKI Jakarta', 'Lainnya'], values: [3500, 2800, 2200, 1500, 2458] }
+    };
+
+    const demoFormasi = [
+      { no: 1, nama: 'Dokter Gigi', jenjang: 'Ahli Pertama', persetujuan: 25, kebutuhan: 25 },
+      { no: 2, nama: 'Perawat', jenjang: 'Terampil', persetujuan: 150, kebutuhan: 150 },
+      { no: 3, nama: 'Bidan', jenjang: 'Terampil', persetujuan: 30, kebutuhan: 28 },
+      { no: 4, nama: 'Apoteker', jenjang: 'Ahli Pertama', persetujuan: 20, kebutuhan: 18 },
+      { no: 5, nama: 'Analis Kesehatan', jenjang: 'Terampil', persetujuan: 15, kebutuhan: 12 },
     ];
 
-    const mockPeserta = [
-      { nik: '1234567890123456', nama: 'Ahmad Fauzi', jabfung: 'Perawat', instansi: 'RSUD Dr. Soetomo', daftar: '2024-01-15', verif: 'Belum Diverifikasi', ujian: 'Belum Ujian' },
-      { nik: '2345678901234567', nama: 'Siti Aminah', jabfung: 'Bidan', instansi: 'Puskesmas Wonokromo', daftar: '2024-01-16', verif: 'Lolos Administrasi', ujian: 'Lulus' },
-      { nik: '3456789012345678', nama: 'Budi Santoso', jabfung: 'Dokter Gigi', instansi: 'RSUPN Dr. Cipto M.', daftar: '2024-01-17', verif: 'Lolos Administrasi', ujian: 'Tidak Lulus' },
-      { nik: '4567890123456789', nama: 'Diana Pertiwi', jabfung: 'Apoteker', instansi: 'Dinkes Jawa Timur', daftar: '2024-01-18', verif: 'Tidak Lolos', ujian: 'Belum Ujian' },
-      { nik: '5678901234567890', nama: 'Rudi Hermawan', jabfung: 'Perawat', instansi: 'RSUD Dr. Soetomo', daftar: '2024-01-19', verif: 'Belum Diverifikasi', ujian: 'Sedang Ujian' },
+    const demoPeserta = [
+      { nama: 'Ahmad Fauzi', unit_kerja: 'RSUD Dr. Soetomo', jabfung: 'Perawat', jenjang: 'Terampil', foto: 'https://drive.google.com/placeholder/foto1.jpg', status: 'Belum Ujian' },
+      { nama: 'Siti Aminah', unit_kerja: 'Puskesmas Wonokromo', jabfung: 'Bidan', jenjang: 'Terampil', foto: 'https://drive.google.com/placeholder/foto2.jpg', status: 'Lulus' },
+      { nama: 'Budi Santoso', unit_kerja: 'RSUPN Dr. Cipto M.', jabfung: 'Dokter Gigi', jenjang: 'Ahli Pertama', foto: 'https://drive.google.com/placeholder/foto3.jpg', status: 'Tidak Lulus' },
+      { nama: 'Diana Pertiwi', unit_kerja: 'Dinkes Jawa Timur', jabfung: 'Apoteker', jenjang: 'Ahli Muda', foto: 'https://drive.google.com/placeholder/foto4.jpg', status: 'Belum Ujian' },
+      { nama: 'Rudi Hermawan', unit_kerja: 'RSUD Dr. Soetomo', jabfung: 'Perawat', jenjang: 'Ahli Madya', foto: 'https://drive.google.com/placeholder/foto5.jpg', status: 'Sedang Ujian' },
     ];
 
     let isLoggedIn = false;
+    let useMockData = false; // Set ke false jika sudah konek ke Google Sheets
+
+    // Fungsi Ambil Data dari Google Sheets (using POST)
+    async function fetchFromSheet(sheetName) {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'action=getData&sheet=' + encodeURIComponent(sheetName)
+        });
+        const result = await response.json();
+        console.log('Fetch ' + sheetName + ' response:', result);
+        if (result.success) {
+          return result.data;
+        } else {
+          console.error('Error fetching ' + sheetName + ':', result.message);
+          return null;
+        }
+      } catch (error) {
+        console.error('Error fetching from sheet:', error);
+        return null;
+      }
+    }
+
+    // Fungsi Load Data Dashboard
+    async function loadDashboardData() {
+      if (useMockData) {
+        // Gunakan data demo
+        updateDashboard(demoStats, demoChartData);
+        return;
+      }
+      
+      try {
+        // Ambil data dari Google Sheets via getDashboard action
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'action=getDashboard'
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          updateDashboard(result.stats, result.charts);
+        } else {
+          console.error('Error:', result.message);
+          // Fallback ke data dari Peserta sheet
+          await loadDashboardFromPeserta();
+        }
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+        // Fallback ke data dari Peserta sheet
+        await loadDashboardFromPeserta();
+      }
+    }
+    
+    // Fallback: Load dashboard stats from Peserta sheet
+    async function loadDashboardFromPeserta() {
+      try {
+        const data = await fetchFromSheet('Peserta');
+        const formasiData = await fetchFromSheet('Formasi');
+        
+        let lulus = 0, tidakLulus = 0, belumUjian = 0;
+        if (data) {
+          for (let i = 0; i < data.length; i++) {
+            const status = data[i][19]; // Status Ujian
+            if (status === 'Lulus') lulus++;
+            else if (status === 'Tidak Lulus') tidakLulus++;
+            else belumUjian++;
+          }
+        }
+        
+        const stats = {
+          totalPeserta: data ? data.length : 0,
+          totalJabfung: 5,
+          totalFormasi: formasiData ? formasiData.length : 0,
+          pesertaLulus: lulus,
+          pesertaTidakLulus: tidakLulus
+        };
+        
+        const charts = {
+          tahun: [1200, 1450, 1680, 2100, 2580, 3100, 3800, 4500, 5200, 5800, 6500, data ? data.length : 0],
+          jabfung: { labels: ['Perawat', 'Bidan', 'Dokter Gigi', 'Apoteker', 'Analis Kesehatan'], values: [3200, 4500, 2100, 1500, 800] },
+          kelulusan: { lulus: lulus, tidakLulus: tidakLulus },
+          provinsi: { labels: ['Jawa Timur', 'Jawa Barat', 'Jawa Tengah', 'DKI Jakarta', 'Lainnya'], values: [3500, 2800, 2200, 1500, Math.max(0, (data ? data.length : 0) - 10000)] }
+        };
+        
+        updateDashboard(stats, charts);
+      } catch (error) {
+        console.error('Error loading dashboard from peserta:', error);
+        updateDashboard(demoStats, demoChartData);
+      }
+    }
+
+    // Fungsi Update Dashboard dengan Data
+    function updateDashboard(stats, charts) {
+      // Update counters
+      document.querySelector('[data-count="totalPeserta"]').dataset.count = stats.totalPeserta;
+      document.querySelector('[data-count="totalJabfung"]').dataset.count = stats.totalJabfung;
+      document.querySelector('[data-count="totalFormasi"]').dataset.count = stats.totalFormasi;
+      document.querySelector('[data-count="pesertaLulus"]').dataset.count = stats.pesertaLulus;
+      document.querySelector('[data-count="pesertaTidakLulus"]').dataset.count = stats.pesertaTidakLulus;
+      
+      animateCounters();
+      
+      // Update charts
+      updateCharts(charts);
+    }
+
+    // Update Charts
+    function updateCharts(charts) {
+      // Chart Tahun
+      const chartTahun = new ApexCharts(document.querySelector("#chartTahun"), {
+        chart: { type: 'area', toolbar: { show: false }, height: 300 },
+        series: [{ name: 'Peserta', data: charts.tahun }],
+        colors: ['#3b82f6'],
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.1 } },
+        xaxis: { categories: ['2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024'] }
+      });
+      chartTahun.render();
+
+      // Chart Jabfung
+      const chartJabfung = new ApexCharts(document.querySelector("#chartJabfung"), {
+        chart: { type: 'bar', toolbar: { show: false }, height: 300 },
+        series: [{ name: 'Peserta', data: charts.jabfung.values }],
+        colors: ['#14b8a6'],
+        plotOptions: { bar: { borderRadius: 8, horizontal: true } },
+        xaxis: { categories: charts.jabfung.labels }
+      });
+      chartJabfung.render();
+
+      // Chart Kelulusan
+      const total = charts.kelulusan.lulus + charts.kelulusan.tidakLulus;
+      const belum = stats.totalPeserta - total;
+      const chartKelulusan = new ApexCharts(document.querySelector("#chartKelulusan"), {
+        chart: { type: 'donut', height: 300 },
+        series: [charts.kelulusan.lulus, charts.kelulusan.tidakLulus, Math.max(0, belum)],
+        labels: ['Lulus', 'Tidak Lulus', 'Belum Ujian'],
+        colors: ['#22c55e', '#ef4444', '#94a3b8'],
+        legend: { position: 'bottom' }
+      });
+      chartKelulusan.render();
+
+      // Chart Provinsi
+      const chartProvinsi = new ApexCharts(document.querySelector("#chartProvinsi"), {
+        chart: { type: 'pie', height: 300 },
+        series: charts.provinsi.values,
+        labels: charts.provinsi.labels,
+        colors: ['#3b82f6', '#14b8a6', '#8b5cf6', '#f59e0b', '#6b7280']
+      });
+      chartProvinsi.render();
+
+      // Chart SDM Bazzetting (bar chart untuk melihat kekurangan per unit)
+      window.chartSDM = new ApexCharts(document.querySelector("#chartSDM"), {
+        chart: { type: 'bar', height: 300, toolbar: { show: false } },
+        series: [{ name: 'Selisih', data: [78, 47] }],
+        xaxis: { categories: ['Terpenuhi', 'Kekurangan'] },
+        colors: ['#22c55e', '#ef4444'],
+        plotOptions: { bar: { borderRadius: 4, horizontal: true } }
+      });
+      window.chartSDM.render();
+    }
+
+    // Fungsi Upload ke Google Drive via Apps Script
+    // Returns object with url and fileId
+    async function uploadToDrive(file, folderId) {
+      console.log('Uploading file:', file.name);
+      const reader = new FileReader();
+      return new Promise((resolve, reject) => {
+        reader.onload = async function(e) {
+          const base64 = e.target.result.split(',')[1];
+          const fileName = file.name;
+          
+          try {
+            console.log('Sending to:', SCRIPT_URL);
+            const response = await fetch(SCRIPT_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `action=upload&fileName=${encodeURIComponent(fileName)}&fileData=${encodeURIComponent(base64)}&folderId=${encodeURIComponent(folderId)}`
+            });
+            
+            const result = await response.json();
+            console.log('Upload response:', result);
+            
+            if (result.success) {
+              resolve({ url: result.fileUrl, id: result.fileId });
+            } else {
+              console.error('Upload failed:', result.message);
+              alert('Gagal upload file ' + fileName + ': ' + result.message);
+              resolve(null);
+            }
+          } catch (error) {
+            console.error('Upload error:', error);
+            alert('Error upload file: ' + error.message + '\n\nPastikan Google Apps Script sudah di-deploy dengan benar!');
+            resolve(null);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Fungsi Simpan ke Google Sheets via Apps Script
+    async function saveToSheet(data) {
+      try {
+        console.log('Saving to sheet:', data);
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `action=save&data=${encodeURIComponent(JSON.stringify(data))}`
+        });
+        
+        const result = await response.json();
+        console.log('Save response:', result);
+        
+        if (result.success) {
+          return true;
+        } else {
+          console.error('Save failed:', result.message);
+          alert('Gagal menyimpan data: ' + result.message);
+          return false;
+        }
+      } catch (error) {
+        console.error('Save error:', error);
+        alert('Error menyimpan data: ' + error.message + '\n\nPastikan Google Apps Script sudah di-deploy dengan benar!\n\nBuka Console (F12) untuk melihat detail error.');
+        return false;
+      }
+    }
 
     // Toggle Sidebar
     function toggleSidebar() {
@@ -595,7 +928,8 @@
       // Load page-specific data
       if (page === 'formasi') loadFormasiTable();
       if (page === 'peserta') loadPesertaTable();
-      if (page === 'dashboard') initCharts();
+      if (page === 'bazzetting') loadBazzettingData();
+      if (page === 'dashboard') loadDashboardData();
     }
 
     // Login Functions
@@ -628,35 +962,154 @@
     // Load Tables
     function loadFormasiTable() {
       const tbody = document.getElementById('formasiTable');
-      tbody.innerHTML = mockFormasi.map((item, i) => `
-        <tr class="hover:bg-gray-50">
-          <td class="px-6 py-4 text-sm">${i+1}</td>
-          <td class="px-6 py-4 text-sm font-medium">${item.nama}</td>
-          <td class="px-6 py-4 text-sm">${item.jenjang}</td>
-          <td class="px-6 py-4 text-sm">${item.unit}</td>
-          <td class="px-6 py-4 text-sm font-semibold">${item.jumlah}</td>
-          <td class="px-6 py-4 text-sm">${item.tahun}</td>
-          <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${item.status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${item.status}</span></td>
-        </tr>
-      `).join('');
+      
+      if (useMockData) {
+        tbody.innerHTML = demoFormasi.map((item, i) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm">${i+1}</td>
+            <td class="px-6 py-4 text-sm font-medium">${item.nama}</td>
+            <td class="px-6 py-4 text-sm">${item.jenjang}</td>
+            <td class="px-6 py-4 text-sm">${item.persetujuan}</td>
+            <td class="px-6 py-4 text-sm font-semibold">${item.kebutuhan}</td>
+          </tr>
+        `).join('');
+      } else {
+        loadFormasiFromSheet(tbody);
+      }
+    }
+    
+    async function loadFormasiFromSheet(tbody) {
+      try {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center">Memuat data...</td></tr>';
+        const data = await fetchFromSheet('Formasi');
+        if (data && data.length > 0) {
+          tbody.innerHTML = data.map((row, i) => `
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 text-sm">${i+1}</td>
+              <td class="px-6 py-4 text-sm font-medium">${row[1] || ''}</td>
+              <td class="px-6 py-4 text-sm">${row[2] || ''}</td>
+              <td class="px-6 py-4 text-sm">${row[3] || ''}</td>
+              <td class="px-6 py-4 text-sm font-semibold">${row[4] || ''}</td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Belum ada data</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error loading formasi:', error);
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error: ' + error.message + '</td></tr>';
+      }
     }
 
     function loadPesertaTable() {
       const tbody = document.getElementById('pesertaTable');
-      const statusVerif = { 'Belum Diverifikasi': 'bg-yellow-100 text-yellow-800', 'Lolos Administrasi': 'bg-green-100 text-green-800', 'Tidak Lolos': 'bg-red-100 text-red-800' };
       const statusUjian = { 'Belum Ujian': 'bg-gray-100 text-gray-800', 'Sedang Ujian': 'bg-blue-100 text-blue-800', 'Lulus': 'bg-green-100 text-green-800', 'Tidak Lulus': 'bg-red-100 text-red-800' };
       
-      tbody.innerHTML = mockPeserta.map(item => `
-        <tr class="hover:bg-gray-50">
-          <td class="px-6 py-4 text-sm font-mono">${item.nik}</td>
-          <td class="px-6 py-4 text-sm font-medium">${item.nama}</td>
-          <td class="px-6 py-4 text-sm">${item.jabfung}</td>
-          <td class="px-6 py-4 text-sm">${item.instansi}</td>
-          <td class="px-6 py-4 text-sm">${item.daftar}</td>
-          <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${statusVerif[item.verif]}">${item.verif}</span></td>
-          <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${statusUjian[item.ujian]}">${item.ujian}</span></td>
-        </tr>
-      `).join('');
+      if (useMockData) {
+        tbody.innerHTML = demoPeserta.map((item, i) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm">${i+1}</td>
+            <td class="px-6 py-4 text-sm font-medium">${item.nama}</td>
+            <td class="px-6 py-4 text-sm">${item.unit_kerja}</td>
+            <td class="px-6 py-4 text-sm">${item.jabfung}</td>
+            <td class="px-6 py-4 text-sm">${item.jenjang}</td>
+            <td class="px-6 py-4 text-sm">${item.foto ? '<a href="' + item.foto + '" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a>' : '-'}</td>
+            <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${statusUjian[item.status] || 'bg-gray-100 text-gray-800'}">${item.status}</span></td>
+          </tr>
+        `).join('');
+      } else {
+        loadPesertaFromSheet(tbody);
+      }
+    }
+    
+    async function loadPesertaFromSheet(tbody) {
+      try {
+        tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center">Memuat data...</td></tr>';
+        const data = await fetchFromSheet('Peserta');
+        const statusVerif = { 'Belum Diverifikasi': 'bg-yellow-100 text-yellow-800', 'Lolos Administrasi': 'bg-green-100 text-green-800', 'Tidak Lolos': 'bg-red-100 text-red-800' };
+        const statusUjian = { 'Belum Ujian': 'bg-gray-100 text-gray-800', 'Sedang Ujian': 'bg-blue-100 text-blue-800', 'Lulus': 'bg-green-100 text-green-800', 'Tidak Lulus': 'bg-red-100 text-red-800' };
+        
+        if (data && data.length > 0) {
+          tbody.innerHTML = data.map((row, i) => {
+            const verif = row[18] || 'Belum Diverifikasi';
+            const ujian = row[19] || 'Belum Ujian';
+            const fotoUrl = row[16] || '';
+            const fotoId = row[21] || '';
+            return `
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm">${i+1}</td>
+                <td class="px-6 py-4 text-sm font-medium">${row[2] || ''}</td>
+                <td class="px-6 py-4 text-sm">${row[7] || ''}</td>
+                <td class="px-6 py-4 text-sm">${row[14] || ''}</td>
+                <td class="px-6 py-4 text-sm">${row[15] || ''}</td>
+                <td class="px-6 py-4 text-sm">${fotoUrl ? '<a href="' + fotoUrl + '" target="_blank" class="text-blue-600 hover:underline">Lihat Foto</a>' : '-'}</td>
+                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs ${statusUjian[ujian] || 'bg-gray-100 text-gray-800'}">${ujian}</span></td>
+              </tr>
+            `;
+          }).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Belum ada data</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error loading peserta:', error);
+        tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Error: ' + error.message + '</td></tr>';
+      }
+    }
+    
+    // Load Bazzetting Data from Google Sheets
+    async function loadBazzettingData() {
+      if (useMockData) return; // Use static data for demo
+      
+      try {
+        const data = await fetchFromSheet('Bazzetting');
+        if (data && data.length > 0) {
+          // Calculate stats
+          let totalData = 0;
+          let totalKebutuhan = 0;
+          let totalSisa = 0;
+          
+          const tableHtml = data.map(row => {
+            const instansi = row[0] || '';
+            const jenisJabfung = row[1] || '';
+            const jenjang = row[2] || '';
+            const kebutuhan = parseInt(row[3]) || 0;
+            const pemangku = row[4] || '';
+            const lowongan = row[5] || '';
+            const formasi = row[6] || '';
+            const pemangkuSekarang = row[7] || '';
+            const pemangkuDisetujui = row[8] || '';
+            const sisa = row[9] || '';
+            
+            totalData++;
+            totalKebutuhan += kebutuhan;
+            const sisaNum = parseInt(sisa) || 0;
+            totalSisa += sisaNum;
+            
+            return `
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm">${instansi}</td>
+                <td class="px-6 py-4 text-sm">${jenisJabfung}</td>
+                <td class="px-6 py-4 text-sm">${jenjang}</td>
+                <td class="px-6 py-4 text-sm font-semibold">${kebutuhan}</td>
+                <td class="px-6 py-4 text-sm">${pemangku}</td>
+                <td class="px-6 py-4 text-sm">${lowongan}</td>
+                <td class="px-6 py-4 text-sm">${formasi}</td>
+                <td class="px-6 py-4 text-sm">${pemangkuSekarang}</td>
+                <td class="px-6 py-4 text-sm">${pemangkuDisetujui}</td>
+                <td class="px-6 py-4 text-sm font-semibold ${sisaNum < 0 ? 'text-red-600' : 'text-green-600'}">${sisa}</td>
+              </tr>
+            `;
+          }).join('');
+          
+          // Update stats
+          document.getElementById('bazzetTotalUnit').textContent = totalData;
+          document.getElementById('bazzetTerpenuhi').textContent = totalKebutuhan;
+          document.getElementById('bazzetKekurangan').textContent = totalSisa;
+          document.getElementById('bazzetTable').innerHTML = tableHtml;
+        }
+      } catch (error) {
+        console.error('Error loading bazzetting:', error);
+      }
     }
 
     // Animated Counters
@@ -732,11 +1185,95 @@
       animateCounters();
     }
 
-    // Pendaftaran Form
-    document.getElementById('pendaftaranForm').addEventListener('submit', function(e) {
+    // Pendaftaran Form - dengan Google Sheets & Drive
+    document.getElementById('pendaftaranForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      alert('Pendaftaran berhasil! Anda akan menerima email konfirmasi.');
-      this.reset();
+      
+      const formData = new FormData(this);
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      
+      // Tampilkan loading
+      submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengirim... ';
+      submitBtn.disabled = true;
+      
+      try {
+        // Kumpulkan data formulir
+        const data = {
+          timestamp: new Date().toISOString(),
+          periode: formData.get('periode'),
+          nama_lengkap: formData.get('nama'),
+          nik: formData.get('nik'),
+          nip: formData.get('nip'),
+          nomor_telpon: formData.get('nomor_hp'),
+          email: formData.get('email'),
+          unit_kerja: formData.get('unit_kerja'),
+          jenis_jabatan: formData.get('jenis_jabatan'),
+          jenjang_jabatan: formData.get('jenjang'),
+          pangkat_gol: formData.get('pangkat_gol'),
+          nilai_pak: formData.get('nilai_pak'),
+          nomor_str: formData.get('nomor_str'),
+          kategori_penjenjangan: formData.get('kategori_penjenjangan'),
+          jabfung_tujuan: formData.get('jabfung_tujuan'),
+          jenjang_tujuan: formData.get('jenjang_tujuan'),
+          foto_url: '',
+          dokumen_url: ''
+        };
+        
+        // Upload foto ke Google Drive
+        const fotoFile = formData.get('foto');
+        let fotoId = '';
+        if (fotoFile && fotoFile.name) {
+          if (useMockData) {
+            data.foto_url = 'https://drive.google.com/placeholder/' + fotoFile.name;
+            fotoId = 'mock_' + fotoFile.name;
+          } else {
+            const fotoResult = await uploadToDrive(fotoFile, DRIVE_FOLDER_ID);
+            data.foto_url = fotoResult ? fotoResult.url : 'Upload gagal';
+            fotoId = fotoResult ? fotoResult.id : '';
+          }
+        }
+        
+        // Upload dokumen ke Google Drive
+        const dokumenFiles = formData.getAll('dokumen');
+        if (dokumenFiles.length > 0 && dokumenFiles[0].name) {
+          const uploadedDocs = [];
+          for (const file of dokumenFiles) {
+            if (useMockData) {
+              uploadedDocs.push('https://drive.google.com/placeholder/' + file.name);
+            } else {
+              const docResult = await uploadToDrive(file, DRIVE_FOLDER_ID);
+              uploadedDocs.push(docResult ? docResult.url : file.name);
+            }
+          }
+          data.dokumen_url = uploadedDocs.join(', ');
+        }
+        
+        // Add foto ID
+        data.foto_id = fotoId;
+        
+        // Simpan ke Google Sheets
+        if (useMockData) {
+          // Demo mode - simulasi berhasil
+          alert('Pendaftaran berhasil!\n\nData: ' + JSON.stringify(data, null, 2));
+          document.getElementById('pendaftaranForm').reset();
+        } else {
+          // Mode Production - simpan ke Google Sheets
+          const saved = await saveToSheet(data);
+          if (saved) {
+            alert('Pendaftaran berhasil! Data telah disimpan ke Google Sheets.');
+            document.getElementById('pendaftaranForm').reset();
+          } else {
+            alert('Gagal menyimpan data. Silakan coba lagi.');
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan: ' + error.message);
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
     });
 
     // Initialize
